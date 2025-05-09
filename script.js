@@ -462,8 +462,8 @@ function highlight1() {
                 all_nodes.forEach(n => {
                     if (n.style.backgroundColor === "green") {
                         n.style.backgroundColor = "grey";
-                        n.onclick = null;
                     }
+                    n.onclick = null;
                 });
 
                 const neighbours = graph[node.id];
@@ -493,8 +493,8 @@ function highlight2() {
                 all_nodes.forEach(n => {
                     if (n.style.backgroundColor === "green") {
                         n.style.backgroundColor = "grey";
-                        n.onclick = null;
                     }
+                    n.onclick = null;
                 })
                 const neighbours = graph[node.id];
                 neighbours.forEach(neighbourbtn => {

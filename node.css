@@ -1,0 +1,110 @@
+.node{
+    background-color: grey;
+    width:2.5em;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    text-align: center;
+    border: 2px solid white;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 10000;
+    transition: background-color 0.15s ease-in;
+    pointer-events: auto;
+}
+
+.node:hover{
+    background-color: rgb(178, 178, 178);
+    cursor: pointer;
+}
+
+.last_row_2,
+.last_row_1,
+.div2 {
+    position: absolute;
+    aspect-ratio: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    top: 50%;
+    left: 50%;
+    z-index: 20;
+}
+
+.last_row_1 {
+    transform: translate(48%, -50%);
+    width: min(32vw, 32vh);
+}
+
+.last_row_2 {
+    transform: translate(-149%, -50%);
+
+    width: min(32vw, 32vh);
+}
+
+.div2 {
+    position: absolute;
+    top: 2%;
+    left: 50%;
+    transform: translate(-50%, 75%);
+    width: min(50vw, 50vh);
+    display: flex;
+    justify-content: space-evenly;
+
+}
+
+.div3 {
+    z-index: 10;
+    position: absolute;
+    display: flex;
+    justify-content: space-between;
+    top: 84%;
+    width: min(40vw, 40vh);
+    pointer-events: none; 
+    z-index: 1000;
+
+}
+.div3 > .node {
+    pointer-events: auto;
+    position: relative;
+    z-index: 1001;
+  }
+.div4 {
+    z-index: 100;
+    position: absolute;
+    display: flex;
+    align-items: flex-end;
+    top: 97%;
+    width: min(50vw, 50vh);
+    justify-content: space-between;
+}
+
+.div5 {
+    z-index: 100;
+    position: absolute;
+    display: flex;
+    top: 11%;
+    width: min(38vw, 38vh);
+    justify-content: space-between;
+}
+
+.div6 {
+    z-index: 100;
+    position: absolute;
+    display: flex;
+    top: 27%;
+    width: min(25vw, 25vh);
+    justify-content: space-between;
+}
+
+.div7 {
+    z-index: 100;
+    position: absolute;
+    display: flex;
+    top: -1%;
+    width: min(50vw, 50vh);
+    justify-content: space-between;
+
+}

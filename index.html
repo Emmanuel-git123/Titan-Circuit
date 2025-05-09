@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delta Task-1</title>
+    <link rel="stylesheet" href="hexagon.css">
+    <link rel="stylesheet" href="node.css">
+    <link rel="stylesheet" href="timer_score.css">
+    <style>
+        html,
+        body {
+            background-color: black;
+            margin: 0;
+            padding: 0;
+            overflow: visible;
+            height: 100%;
+            width: 100%;
+            pointer-events: all;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="timer_block">
+
+        <div class="sub_block">
+
+            <div class="block1">
+
+                <div class="timer" id="timer1">2:00</div>
+                <button id="pause"><b>PAUSE</b></button>
+                <button id="resume"><b>RESUME</b></button>
+                <button id="reset"><b>RESET</b></button>
+                <div class="timer" id="timer2">2:00</div>
+
+            </div>
+
+            <div class="block3">
+                <div id="red_score">Red:0</div>
+                <div id="blue_score">Blue:0</div>
+            </div>
+            
+        </div>
+
+        <div class="block2">
+
+            <div class="stopwatch" id="stopwatch1">30</div>
+            <div class="stopwatch" id="stopwatch2">30</div>
+
+        </div>
+
+    </div>
+
+    <div id="weights_container"
+        style="z-index: 999999999999999; position: absolute; top: 0%; left: 0; width: 100%; height: 100%;">
+    </div>
+
+    <div class="container" id="box">
+
+        <div class="hexwrapper1">
+
+            <div class="last_row_2">
+                <button class="node playable playable1" id="node7">7</button>
+                <button class="node playable playable2" id="node8">8</button>
+                <button class="node playable3" id="node9">9</button>
+            </div>
+
+            <div class="last_row_1">
+                <button class="node playable3" id="node10">10</button>
+                <button class="node playable playable2" id="node11">11</button>
+                <button class="node playable playable1" id="node12">12</button>
+            </div>
+
+            <div class="div4">
+                <button class="node playable playable1" id="node17">17</button>
+                <button class="node playable playable1" id="node18">18</button>
+            </div>
+
+            <div class="div7">
+                <button class="node playable playable1" id="node1">1</button>
+                <button class="node playable playable1" id="node2">2</button>
+            </div>
+
+            <div class="big_hexagon1">
+
+                <div class="div6">
+                    <button class="node playable3" id="node5">5</button>
+                    <button class="node playable3" id="node6">6</button>
+                </div>
+
+                <div class="small_hexagon1">
+
+                    <div class="hexwrapper2">
+
+                        <div class="div5">
+                            <button class="node playable playable2" id="node3">3</button>
+                            <button class="node playable playable2" id="node4">4</button>
+                        </div>
+
+                        <div class="div2">
+                            <button class="node playable3" id="node13">13</button>
+                            <button class="node playable3" id="node14">14</button>
+                        </div>
+
+                        <div class="div3">
+                            <button class="node playable playable2" id="node15">15</button>
+                            <button class="node playable playable2" id="node16">16</button>
+                        </div>
+
+                        <div id="lines_container"
+                            style="z-index: 10; position: absolute; top: 0%; left: 0; width: 100%; height: 100%;">
+                        </div>
+
+                        <div class="big_hexagon2">
+                            <div class="small_hexagon2">
+
+                                <div class="hexwrapper3">
+                                    <div class="big_hexagon3">
+                                        <div class="small_hexagon3"></div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>

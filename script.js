@@ -15,6 +15,42 @@ const outer_nodes = ["node1", "node2", "node12", "node17", "node18", "node7"];
 const middle_nodes = ["node3", "node4", "node11", "node16", "node15", "node8"];
 const inner_nodes = ["node5", "node6", "node9", "node10", "node13", "node14"];
 
+function play_next_circuit_unlock() {
+    const next_circuit_unlock = document.getElementById("next_circuit_unlock");
+    next_circuit_unlock.playbackRate = 1;
+    next_circuit_unlock.play();
+}
+
+function play_click() {
+    const click = document.getElementById("click");
+    click.playbackRate = 1.25;
+    click.play();
+}
+
+function play_select_click() {
+    const select_click = document.getElementById("select_click");
+    select_click.playbackRate = 1;
+    select_click.play();
+}
+
+function play_movement() {
+    const movement = document.getElementById("movement");
+    movement.playbackRate = 1;
+    movement.play();
+}
+
+function play_winning_notification() {
+    const winning_notification = document.getElementById("winning_notification");
+    winning_notification.playbackRate = 1;
+    winning_notification.play();
+}
+
+function play_select() {
+    const select = document.getElementById("select");
+    select.playbackRate = 1;
+    select.play();
+}
+
 function diagonal_lines(n1, n2) {
 
     const btn1 = document.getElementById(`node${n1}`);
@@ -221,6 +257,7 @@ function placement_inner_condition() {
     if (filled < 2) {
         middle_btns.forEach(btn2 => {
             btn2.onclick = function () {
+                play_click();
                 const check1 = btn2.style.backgroundColor === "red";
                 const check2 = btn2.style.backgroundColor === "blue";
                 if (!check1 && !check2) {
@@ -262,6 +299,7 @@ function placement_outer_condition() {
     if (any_grey === true) {
         outer_btns.forEach(btn1 => {
             btn1.onclick = function () {
+                play_click();
                 const check1 = btn1.style.backgroundColor === "red";
                 const check2 = btn1.style.backgroundColor === "blue";
                 if (!check1 && !check2) {
@@ -272,6 +310,7 @@ function placement_outer_condition() {
 
     }
     else if (any_grey === false) {
+        play_next_circuit_unlock();
         placement_inner_condition();
     }
 
@@ -280,8 +319,11 @@ function timer1() {
     if (time1 < 0) {
         clearInterval(key1);
         clearInterval(key2);
-        alert("Player 2 WON!!!");
-        location.reload();
+        play_winning_notification();
+        setTimeout(() => {
+            alert("Player 2 WON!!!");
+            location.reload();
+        }, 300);
     }
 
     else {
@@ -299,8 +341,11 @@ function timer2() {
     if (time2 < 0) {
         clearInterval(key1);
         clearInterval(key2);
-        alert("Player 1 WON!!!");
-        location.reload();
+        play_winning_notification();
+        setTimeout(() => {
+            alert("Player 1 WON!!!");
+            location.reload();
+        }, 300);
     }
     else {
         let minute2 = Math.floor(time2 / 60);
@@ -317,13 +362,16 @@ function timer3() {
     if (time3 < 0) {
         clearInterval(key1);
         clearInterval(key2);
-        if (p1) {
-            alert("Player 2 WON!!!");
-        }
+        play_winning_notification();
+        setTimeout(() => {
+            if (p1) {
+                alert("Player 2 WON!!!");
+            }
         else {
             alert("Player 1 WON!!!");
-        }
-        location.reload();
+            }
+            location.reload();
+        }, 300);
     }
     else {
         document.getElementById("stopwatch1").textContent = `${time3 < 10 ? '0' + time3 : time3}`;
@@ -335,13 +383,16 @@ function timer4() {
     if (time4 < 0) {
         clearInterval(key1);
         clearInterval(key2);
-        if (p1) {
-            alert("Player 2 WON!!!");
-        }
-        else {
-            alert("Player 1 WON!!!");
-        }
-        location.reload();
+        play_winning_notification();
+        setTimeout(() => {
+            if (p1) {
+                alert("Player 2 WON!!!");
+            }
+            else {
+                alert("Player 1 WON!!!");
+            }
+            location.reload();
+        }, 300);
     }
     else {
         document.getElementById("stopwatch2").textContent = `${time4 < 10 ? '0' + time4 : time4}`;
@@ -359,15 +410,20 @@ if (document.getElementById("timer1").textContent == `2:00` && p1) {
 }
 
 pause.onclick = function () {
+    play_select();
     pause_timer();
 }
 
 resume.onclick = function () {
+    play_select();
     resume_timer();
 }
 
 reset.onclick = function () {
-    reset_timer();
+    play_select();
+    setTimeout(() => {
+        reset_timer();
+    }, 300);
 }
 
 function pause_timer() {
@@ -423,13 +479,14 @@ function movement() {
 
 function check_win_condition() {
     const innerNodes = document.querySelectorAll(".playable3");
-    let all_grey = false;
+    let all_coloured = true;
     innerNodes.forEach(node => {
         if (node.style.backgroundColor !== "blue" && node.style.backgroundColor !== "red") {
-            all_grey = true;
+            all_coloured = false;
         }
     })
-    if (!all_grey) {
+    if (all_coloured) {
+        play_winning_notification();
         setTimeout(() => {
             if (red_score > blue_score) {
                 alert("Player 1 WON!!!");
@@ -451,6 +508,7 @@ function check_win_condition() {
 
 let flag = false;
 let found = false;
+let audio_flag = true;
 
 function check_middle_nodes() {
     let middle_nodes_full = true;
@@ -478,6 +536,10 @@ function check_middle_nodes() {
             highlight2(found);
         }
     }
+    if(middle_nodes_full && audio_flag) {
+        play_next_circuit_unlock();
+        audio_flag = false;
+    }
     console.log(`found: ${found}`);
     console.log(`middle_nodes_full: ${middle_nodes_full}`);
 
@@ -495,7 +557,7 @@ function highlight1(found) {
     all_nodes.forEach(btn => {
         if (btn.style.backgroundColor === "red") {
             btn.onclick = function () {
-                console.log("boga");
+                play_select_click();
                 all_nodes.forEach(n => {
                     if (n.style.backgroundColor === "green") {
                         n.style.backgroundColor = "grey";
@@ -530,6 +592,7 @@ function highlight1(found) {
                         n_btn.style.backgroundColor = "green";
                         n_btn.onclick = null;
                         n_btn.onclick = function () {
+                            play_movement();
                             movement1(n_btn.id, btn.id);
                             addscore();
                         }
@@ -550,6 +613,7 @@ function highlight2(found) {
     all_nodes.forEach(node => {
         if (node.style.backgroundColor === "blue" && p2) {
             node.onclick = function () {
+                play_select_click();
                 all_nodes.forEach(n => {
                     if (n.style.backgroundColor === "green") {
                         n.style.backgroundColor = "grey";
@@ -584,6 +648,7 @@ function highlight2(found) {
                         btn.style.backgroundColor = "green";
                         btn.onclick = null;
                         btn.onclick = function () {
+                            play_movement();
                             movement2(btn.id, node.id);
                             addscore();
                         }

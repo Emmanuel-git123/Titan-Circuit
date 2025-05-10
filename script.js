@@ -551,6 +551,8 @@ function highlight1(found) {
         if (n.style.backgroundColor === "green") {
             n.style.backgroundColor = "grey";
         }
+        n.classList.remove("green_highlight");
+        n.style.boxShadow="none";
         n.onclick = null;
     });
     
@@ -561,15 +563,16 @@ function highlight1(found) {
                 all_nodes.forEach(n => {
                     if (n.style.backgroundColor === "green") {
                         n.style.backgroundColor = "grey";
+                        n.classList.remove("green_highlight");
+                        n.style.boxShadow="none";
                         n.onclick = null;
                     }
                 });
-
                 const neighbours = graph[btn.id];
-
+                
                 console.log(neighbours);
                 const new_neighbours = [...neighbours];
-
+                
                 if (!found) {
                     for (let neighbour of neighbours) {
                         if (inner_nodes.includes(neighbour)) {
@@ -580,20 +583,27 @@ function highlight1(found) {
                         }
                     }
                 }
-
+                
                 console.log("after");
                 console.log(new_neighbours);
-
+                
                 new_neighbours.forEach(neighbourbtn => {
                     const n_btn = document.getElementById(neighbourbtn);
                     const check1 = n_btn.style.backgroundColor === "red";
                     const check2 = n_btn.style.backgroundColor === "blue";
+                    n_btn.style.boxShadow="0 0 10px red";
                     if (!check1 && !check2 && p1) {
+                        n_btn.classList.add("green_highlight");
                         n_btn.style.backgroundColor = "green";
                         n_btn.onclick = null;
                         n_btn.onclick = function () {
                             play_movement();
                             movement1(n_btn.id, btn.id);
+                            new_neighbours.forEach(n => {
+                                const n_btn = document.getElementById(n);
+                                n_btn.classList.remove("green_highlight");
+                                n_btn.style.boxShadow="none";
+                            })
                             addscore();
                         }
                     }
@@ -608,6 +618,8 @@ function highlight2(found) {
         if (n.style.backgroundColor === "green") {
             n.style.backgroundColor = "grey";
         }
+        n.classList.remove("green_highlight");  
+        n.style.boxShadow="none";
         n.onclick = null;
     });
     all_nodes.forEach(node => {
@@ -617,16 +629,17 @@ function highlight2(found) {
                 all_nodes.forEach(n => {
                     if (n.style.backgroundColor === "green") {
                         n.style.backgroundColor = "grey";
+                        n.classList.remove("green_highlight");
+                        n.style.boxShadow="none";
                         n.onclick = null;
                     }
                 });
-
-
+                
                 const neighbours = graph[node.id];
                 const new_neighbours = [...neighbours];
-
+                
                 if (!found) {
-
+                    
                     for (let neighbour of neighbours) {
                         if (inner_nodes.includes(neighbour)) {
                             const i = new_neighbours.indexOf(neighbour);
@@ -636,20 +649,27 @@ function highlight2(found) {
                         }
                     }
                 }
-
+                
                 console.log(new_neighbours);
-
-
+                
+                
                 new_neighbours.forEach(neighbourbtn => {
                     const btn = document.getElementById(neighbourbtn);
                     const check1 = btn.style.backgroundColor === "red";
                     const check2 = btn.style.backgroundColor === "blue";
                     if (!check1 && !check2 && p2) {
                         btn.style.backgroundColor = "green";
+                        btn.classList.add("green_highlight");
+                        btn.style.boxShadow="0 0 15px rgb(10, 10, 255)";
                         btn.onclick = null;
                         btn.onclick = function () {
                             play_movement();
                             movement2(btn.id, node.id);
+                            new_neighbours.forEach(n => {
+                                const n_btn = document.getElementById(n);
+                                n_btn.classList.remove("green_highlight");
+                                n_btn.style.boxShadow="none";
+                            })
                             addscore();
                         }
                     }
@@ -662,8 +682,14 @@ function highlight2(found) {
 function movement1(btn, node) {
     const dest = document.getElementById(btn);
     const source = document.getElementById(node);
-    source.style.backgroundColor = "grey";
-    dest.style.backgroundColor = "red";
+
+    setTimeout(() => {
+        dest.style.transition = "background-color 0.5s ease-in-out";
+        source.style.transition = "background-color 0.5s ease-in-out";
+
+        source.style.backgroundColor = "grey";
+        dest.style.backgroundColor = "red";
+    }, 200);
 
     document.querySelectorAll(".node").forEach(n => {
         if (n.style.backgroundColor === "green") {
@@ -689,8 +715,14 @@ function movement1(btn, node) {
 function movement2(btn, node) {
     const dest = document.getElementById(btn);
     const source = document.getElementById(node);
-    source.style.backgroundColor = "grey";
-    dest.style.backgroundColor = "blue";
+
+    
+    setTimeout(() => {
+        dest.style.transition = "background-color 0.5s ease-in-out";
+        source.style.transition = "background-color 0.5s ease-in-out";
+        source.style.backgroundColor = "grey";
+        dest.style.backgroundColor = "blue";
+    }, 200);
 
     document.querySelectorAll(".node").forEach(n => {
         if (n.style.backgroundColor === "green") {

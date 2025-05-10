@@ -1,5 +1,4 @@
 .node{
-    background-color: grey;
     width:2.5em;
     aspect-ratio: 1;
     border-radius: 50%;
@@ -11,12 +10,12 @@
     align-items: center;
     position: relative;
     z-index: 10000;
-    transition: background-color 0.15s ease-in;
+    transition: all 0.15s ease-in;
     pointer-events: auto;
 }
 
 .node:hover{
-    background-color: rgb(178, 178, 178);
+    border: 2px solid rgb(178, 178, 178);
     cursor: pointer;
 }
 

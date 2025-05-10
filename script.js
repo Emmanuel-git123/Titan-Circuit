@@ -11,6 +11,9 @@ let key2 = null;
 let red_score;
 let blue_score;
 
+const outer_nodes = ["node1", "node2", "node12", "node17", "node18", "node7"];
+const middle_nodes = ["node3", "node4", "node11", "node16", "node15", "node8"];
+const inner_nodes = ["node5", "node6", "node9", "node10", "node13", "node14"];
 
 function diagonal_lines(n1, n2) {
 
@@ -22,9 +25,6 @@ function diagonal_lines(n1, n2) {
     const rect1 = btn1.getBoundingClientRect();
     const rect2 = btn2.getBoundingClientRect();
     const containerRect = linesContainer.getBoundingClientRect();
-
-
-    // console.log(rect1, rect2);
 
     const x1 = rect1.left + rect1.width / 2 - containerRect.left;
     const y1 = rect1.top + rect1.height / 2 - containerRect.top;
@@ -52,12 +52,12 @@ function drawLines() {
     const container = document.getElementById("lines_container");
     container.innerHTML = '';
 
+    diagonal_lines(18, 16);
     diagonal_lines(4, 2);
-    diagonal_lines(5, 3);
     diagonal_lines(7, 8);
+    diagonal_lines(5, 3);
     diagonal_lines(10, 11);
     diagonal_lines(15, 13);
-    diagonal_lines(18, 16);
 }
 window.addEventListener('load', drawLines);
 
@@ -183,100 +183,99 @@ const graph = {
     node17: ['node7', 'node18'],
     node18: ['node12', 'node16', 'node17']
 };
-let count1 = 0;
-let count2 = 0;
+
 let filled = 0;
 const outer_btns = document.querySelectorAll(".playable1");
 const middle_btns = document.querySelectorAll(".playable2");
 const outer_middle_btns = document.querySelectorAll(".playable");
 
-outer_btns.forEach(btn1 => {
+function placement(btn1) {
+    if (p1) {
+        btn1.style.backgroundColor = "red";
+        p1 = false;
+        p2 = true;
+        clearInterval(key1);
+        clearInterval(key2);
+        key1 = setInterval(timer2, 1000);
+        time4 = 30;
+        document.getElementById("stopwatch1").textContent = `${time4 < 10 ? '0' + time4 : time4}`;
+        key2 = setInterval(timer4, 1000);
+        addscore();
+    }
+    else if (p2) {
+        btn1.style.backgroundColor = "blue";
+        p1 = true;
+        p2 = false;
+        clearInterval(key1);
+        clearInterval(key2);
+        key1 = setInterval(timer1, 1000);
+        time3 = 30;
+        document.getElementById("stopwatch2").textContent = `${time3 < 10 ? '0' + time3 : time3}`;
+        key2 = setInterval(timer3, 1000);
+        addscore();
+    }
+    placement_outer_condition();
+}
 
-    console.log(outer_middle_btns);
-    btn1.onclick = function () {
-        const check1 = btn1.style.backgroundColor === "red";
-        const check2 = btn1.style.backgroundColor === "blue";
-        if ((count1 < 3 || count2 < 3) && p1 && !check1 && !check2) {
-            btn1.style.backgroundColor = "red";
-            count1++;
-            filled++;
-            p1 = false;
-            p2 = true;
-
-            clearInterval(key1);
-            clearInterval(key2);
-            key1 = setInterval(timer2, 1000);
-            time4 = 30;
-            document.getElementById("stopwatch1").textContent = `${time4 < 10 ? '0' + time4 : time4}`;
-            key2 = setInterval(timer4, 1000);
-            addscore();
-        }
-        else if ((count2 < 3 || count1 < 3) && p2 && !check2 && !check1) {
-            btn1.style.backgroundColor = "blue";
-            count2++;
-            filled++;
-            p2 = false;
-            p1 = true;
-
-            clearInterval(key1);
-            clearInterval(key2);
-            key1 = setInterval(timer1, 1000);
-            time3 = 30;
-            document.getElementById("stopwatch2").textContent = `${time3 < 10 ? '0' + time3 : time3}`;
-            key2 = setInterval(timer3, 1000);
-            addscore();
-        }
-        console.log(filled);
+function placement_inner_condition() {
+    if (filled < 2) {
+        middle_btns.forEach(btn2 => {
+            btn2.onclick = function () {
+                const check1 = btn2.style.backgroundColor === "red";
+                const check2 = btn2.style.backgroundColor === "blue";
+                if (!check1 && !check2) {
+                    if (p1) {
+                        btn2.style.backgroundColor = "red";
+                        p1 = false;
+                        p2 = true;
+                    } else {
+                        btn2.style.backgroundColor = "blue";
+                        p1 = true;
+                        p2 = false;
+                    }
+                    filled++;
+                    if (filled == 2) {
+                        middle_btns.forEach(btn2 => {
+                            btn2.onclick = null;
+                        })
+                        movement();
+                    }
+                }
+            }
+        })
     }
 
-})
+}
 
-middle_btns.forEach(btn2 => {
-    btn2.onclick = function () {
-        const check1 = btn2.style.backgroundColor === "red";
-        const check2 = btn2.style.backgroundColor === "blue";
-        if (filled >= 6 && filled < 8) {
+placement_outer_condition();
 
-            if ((count1 < 4 || count2 < 4) && p1 && !check1 && !check2) {
-                btn2.style.backgroundColor = "red";
-                count1++;
-                p1 = false;
-                p2 = true;
-                filled++;
-
-                clearInterval(key1);
-                clearInterval(key2);
-                key1 = setInterval(timer2, 1000);
-                time4 = 30;
-                document.getElementById("stopwatch1").textContent = `${time4 < 10 ? '0' + time4 : time4}`;
-                key2 = setInterval(timer4, 1000);
-                addscore();
-            }
-            else if ((count2 < 4 || count1 < 4) && p2 && !check1 && !check2) {
-                btn2.style.backgroundColor = "blue";
-                count2++;
-                p1 = true;
-                p2 = false;
-                filled++;
-
-                clearInterval(key1);
-                clearInterval(key2);
-                key1 = setInterval(timer1, 1000);
-                time3 = 30;
-                document.getElementById("stopwatch2").textContent = `${time3 < 10 ? '0' + time3 : time3}`;
-                key2 = setInterval(timer3, 1000);
-                addscore();
-            }
-            console.log(count1);
-            console.log(count2);
-            console.log(filled);
-        }
-        if (filled === 8) {
-            movement();
+function placement_outer_condition() {
+    console.log(p1);
+    let any_grey = false;
+    for (let outer_node of outer_nodes) {
+        const btn = document.getElementById(outer_node);
+        const bg = btn.style.backgroundColor;
+        if (bg === "grey") {
+            any_grey = true;
         }
     }
-})
+    if (any_grey === true) {
+        outer_btns.forEach(btn1 => {
+            btn1.onclick = function () {
+                const check1 = btn1.style.backgroundColor === "red";
+                const check2 = btn1.style.backgroundColor === "blue";
+                if (!check1 && !check2) {
+                    placement(btn1);
+                }
+            }
+        })
 
+    }
+    else if (any_grey === false) {
+        placement_inner_condition();
+    }
+
+}
 function timer1() {
     if (time1 < 0) {
         clearInterval(key1);
@@ -424,13 +423,13 @@ function movement() {
 
 function check_win_condition() {
     const innerNodes = document.querySelectorAll(".playable3");
-    let all_grey = true;
+    let all_grey = false;
     innerNodes.forEach(node => {
         if (node.style.backgroundColor !== "blue" && node.style.backgroundColor !== "red") {
-            all_grey = false;
+            all_grey = true;
         }
     })
-    if (all_grey) {
+    if (!all_grey) {
         setTimeout(() => {
             if (red_score > blue_score) {
                 alert("Player 1 WON!!!");
@@ -442,40 +441,96 @@ function check_win_condition() {
                 alert("Draw!!!");
             }
             location.reload();
-        }, 1000);
+        }, 500);
+        return;
     }
     else {
-        if (p1) {
-            highlight1();
-        }
-        else if (p2) {
-            highlight2();
-        }
+        check_middle_nodes();
     }
 }
 
-function highlight1() {
+let flag = false;
+let found = false;
+
+function check_middle_nodes() {
+    let middle_nodes_full = true;
+    middle_nodes.forEach(middle_node => {
+        const bg = document.getElementById(middle_node).style.backgroundColor;
+        if (bg !== "blue" && bg !== "red") {
+            middle_nodes_full = false;
+        }
+    })
+    if (!middle_nodes_full) {
+        if (p1) {
+            highlight1(found);
+        }
+        else if (p2) {
+            highlight2(found);
+        }
+    }
+    else if (middle_nodes_full || flag === true) {
+        flag = true;
+        found = true;
+        if (p1) {
+            highlight1(found);
+        }
+        else if (p2) {
+            highlight2(found);
+        }
+    }
+    console.log(`found: ${found}`);
+    console.log(`middle_nodes_full: ${middle_nodes_full}`);
+
+}
+
+function highlight1(found) {
     const all_nodes = document.querySelectorAll(".node");
-    all_nodes.forEach(node => {
-        if (node.style.backgroundColor === "red" && p1) {
-            node.onclick = function () {
+    all_nodes.forEach(n => {
+        if (n.style.backgroundColor === "green") {
+            n.style.backgroundColor = "grey";
+        }
+        n.onclick = null;
+    });
+    
+    all_nodes.forEach(btn => {
+        if (btn.style.backgroundColor === "red") {
+            btn.onclick = function () {
+                console.log("boga");
                 all_nodes.forEach(n => {
                     if (n.style.backgroundColor === "green") {
                         n.style.backgroundColor = "grey";
+                        n.onclick = null;
                     }
-                    n.onclick = null;
                 });
 
-                const neighbours = graph[node.id];
-                neighbours.forEach(neighbourbtn => {
-                    const btn = document.getElementById(neighbourbtn);
-                    const check1 = btn.style.backgroundColor === "red";
-                    const check2 = btn.style.backgroundColor === "blue";
+                const neighbours = graph[btn.id];
+
+                console.log(neighbours);
+                const new_neighbours = [...neighbours];
+
+                if (!found) {
+                    for (let neighbour of neighbours) {
+                        if (inner_nodes.includes(neighbour)) {
+                            const i = new_neighbours.indexOf(neighbour);
+                            if (i !== -1) {
+                                new_neighbours.splice(i, 1);
+                            }
+                        }
+                    }
+                }
+
+                console.log("after");
+                console.log(new_neighbours);
+
+                new_neighbours.forEach(neighbourbtn => {
+                    const n_btn = document.getElementById(neighbourbtn);
+                    const check1 = n_btn.style.backgroundColor === "red";
+                    const check2 = n_btn.style.backgroundColor === "blue";
                     if (!check1 && !check2 && p1) {
-                        btn.style.backgroundColor = "green";
-                        btn.onclick = null;
-                        btn.onclick = function () {
-                            movement1(btn.id, node.id);
+                        n_btn.style.backgroundColor = "green";
+                        n_btn.onclick = null;
+                        n_btn.onclick = function () {
+                            movement1(n_btn.id, btn.id);
                             addscore();
                         }
                     }
@@ -484,20 +539,44 @@ function highlight1() {
         }
     })
 }
-
-function highlight2() {
+function highlight2(found) {
     const all_nodes = document.querySelectorAll(".node");
+    all_nodes.forEach(n => {
+        if (n.style.backgroundColor === "green") {
+            n.style.backgroundColor = "grey";
+        }
+        n.onclick = null;
+    });
     all_nodes.forEach(node => {
         if (node.style.backgroundColor === "blue" && p2) {
             node.onclick = function () {
                 all_nodes.forEach(n => {
                     if (n.style.backgroundColor === "green") {
                         n.style.backgroundColor = "grey";
+                        n.onclick = null;
                     }
-                    n.onclick = null;
-                })
+                });
+
+
                 const neighbours = graph[node.id];
-                neighbours.forEach(neighbourbtn => {
+                const new_neighbours = [...neighbours];
+
+                if (!found) {
+
+                    for (let neighbour of neighbours) {
+                        if (inner_nodes.includes(neighbour)) {
+                            const i = new_neighbours.indexOf(neighbour);
+                            if (i !== -1) {
+                                new_neighbours.splice(i, 1);
+                            }
+                        }
+                    }
+                }
+
+                console.log(new_neighbours);
+
+
+                new_neighbours.forEach(neighbourbtn => {
                     const btn = document.getElementById(neighbourbtn);
                     const check1 = btn.style.backgroundColor === "red";
                     const check2 = btn.style.backgroundColor === "blue";

@@ -18,7 +18,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            border: 2px solid white;
+            border: 2px solid black;
+            border-radius: 5px;
         }
 
         .stopwatch {
@@ -28,7 +29,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            border: 2px solid white;
+            border: 2px solid black;
+            border-radius: 5px;
         }
 
         .block1 {
@@ -54,38 +56,41 @@
 
         #red_score {
             color: white;
-            background: red;
-            border: 2px solid white;
+            background: tomato;
+            border: 2px solid black;
             height: 40px;
             width: 75px;
             display: flex;
             justify-content: center;
             align-items: center;
+            border-radius: 5px;
         }
 
         #blue_score {
             color: white;
-            background: blue;
-            border: 2px solid white;
+            background: lightblue;
+            border: 2px solid black;
             height: 40px;
             width: 75px;
             display: flex;
             justify-content: center;
             align-items: center;
+            border-radius: 5px;
         }
 
         button {
             cursor: pointer;
+            border-radius: 5px;
         }
 
         #timer1,
         #stopwatch1 {
-            background-color: red;
+            background-color: tomato;
         }
 
         #timer2,
         #stopwatch2 {
-            background-color: blue;
+            background-color: lightblue;
         }
 
         #lines_container,

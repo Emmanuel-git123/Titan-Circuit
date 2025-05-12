@@ -8,10 +8,11 @@
     <link rel="stylesheet" href="hexagon.css">
     <link rel="stylesheet" href="node.css">
     <link rel="stylesheet" href="timer_score.css">
+    <link rel="icon" href="Favicon/icons8-done-16.png" type="image/x-icon">
     <style>
         html,
         body {
-            background-color: black;
+            background-color: bisque;
             margin: 0;
             padding: 0;
             overflow: visible;
@@ -19,10 +20,70 @@
             width: 100%;
             pointer-events: all;
         }
+        #history_moves {
+            border: 2px solid black;
+            width: 80%;
+            height: 90%;
+            box-sizing: border-box;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+            background-color: white;
+            z-index: 999999999999999;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+            box-sizing: border-box;
+            border-radius: 10px;
+        }
+        #history_moves_title {
+            color: black;
+            font-size: 1.5em;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: underline;
+            width: 100%;
+        }
+        #history_moves_list {
+            overflow-y: hidden;
+            overflow-x: hidden;
+            width: 100%;
+            height: 100%;
+            padding-right: 5px;
+            white-space: pre-wrap;
+            padding-top: 5px;
+            padding-bottom: 5px;
+        }
+
+        @media(width<444px){
+            button{
+                width: 50px;
+                font-size: 7.5px;
+            }
+            .weights_container>div{
+                font-size: 1em;
+            }
+        }
+        @media(width<320px){
+            button{
+                width: 35px;
+                font-size: 5.5px;
+            }
+            .weights_container>div{
+                font-size: 0.5em;
+            }
+        }
     </style>
 </head>
 
 <body>
+    <div id="history_moves" style="display: none;">
+        <div id="history_moves_title">History of Moves</div>
+        <div id="history_moves_list"></div>
+    </div> 
+
     <div class="timer_block">
 
         <div class="sub_block">
@@ -31,8 +92,11 @@
 
                 <div class="timer" id="timer1">2:00</div>
                 <button id="pause"><b>PAUSE</b></button>
+                <button id="undo"><b>UNDO</b></button>
                 <button id="resume"><b>RESUME</b></button>
+                <button id="redo"><b>REDO</b></button>
                 <button id="reset"><b>RESET</b></button>
+                <button id="history"><b>HISTORY</b></button>
                 <div class="timer" id="timer2">2:00</div>
 
             </div>
@@ -53,8 +117,7 @@
 
     </div>
 
-    <div id="weights_container"
-        style="z-index: 999999999999999; position: absolute; top: 0%; left: 0; width: 100%; height: 100%;">
+    <div id="weights_container"style="z-index: 999999999; position: absolute; top: 0%; left: 0; width: 100%; height: 100%;">
     </div>
 
     <div class="container" id="box">
@@ -109,8 +172,7 @@
                             <button class="node playable playable2" id="node16" style="background-color: grey;">16</button>
                         </div>
 
-                        <div id="lines_container"
-                            style="z-index: 10; position: absolute; top: 0%; left: 0; width: 100%; height: 100%;">
+                        <div id="lines_container" style="z-index: 10; position: absolute; top: 0%; left: 0; width: 100%; height: 100%;">
                         </div>
 
                         <div class="big_hexagon2">
@@ -141,6 +203,7 @@
     <audio src="Audio Files/mixkit-arcade-game-jump-coin-216.wav" id="movement"></audio>
     <audio src="Audio Files/mixkit-winning-notification-2018.wav" id="winning_notification"></audio>
     <audio src="Audio Files/mixkit-modern-technology-select-3124.wav" id="select"></audio>
+    <audio src="Audio Files/mixkit-8-bit-lose-2031.wav" id="lose"></audio>
     
     <script src="script.js"></script>
 

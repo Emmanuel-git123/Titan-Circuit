@@ -10,7 +10,262 @@ let key1 = null;
 let key2 = null;
 let red_score;
 let blue_score;
+let outer_flag=0;
 
+let node_list = [
+    ["node1", "grey"],
+    ["node2", "grey"],
+    ["node3", "grey"],
+    ["node4", "grey"],
+    ["node5", "grey"],
+    ["node6", "grey"],
+    ["node7", "grey"],
+    ["node8", "grey"],
+    ["node9", "grey"],
+    ["node10", "grey"],
+    ["node11", "grey"],
+    ["node12", "grey"],
+    ["node13", "grey"],
+    ["node14", "grey"],
+    ["node15", "grey"],
+    ["node16", "grey"],
+    ["node17", "grey"],
+    ["node18", "grey"]
+];
+
+function update_node_list(id, color) {
+    node_list.forEach(node => {
+        if (node[0] == id) {
+            node[1] = color;
+        }
+    })
+}
+
+function update_color(id, color) {
+    const node = document.getElementById(id);
+    node.style.backgroundColor = color;
+}
+
+function get_color(id) {
+    let x;
+    for (let node of node_list) {
+        if (node[0] == id) {
+            x = node[1];
+        }
+    }
+    return x;
+}
+
+function set_node_color(id, color) {
+    update_color(id, color);
+    update_node_list(id, color);
+}
+
+let history_array = [];
+let redo_array = [];
+
+function history_display(entry) {
+    const history_moves_list = document.getElementById("history_moves_list");
+
+    history_array.push(entry);
+    const text_history_array=history_array.map(item=>item.text);
+    history_moves_list.textContent=text_history_array.join("\n");
+    history_moves_list.style.color="white";
+    history_moves_list.scrollTop = history_moves_list.scrollHeight;
+}
+
+function history_placement(id, color) {
+    let player;
+    if(color === "tomato"){
+        player="Player1";
+    }
+    else if(color === "lightblue"){
+        player="Player2";
+    }
+    const entry={
+        type: "placement",
+        player: player,
+        to: id,
+        text: `# ${player} places titan at ${id}`
+    };
+
+    history_display(entry);
+}
+function history_movement(source, dest,player_color) {
+    let player;
+    if(player_color==="tomato"){
+        player="Player1";
+    }
+    else if(player_color==="lightblue"){
+        player="Player2";
+    }
+    const entry={
+        type: "movement",
+        player: player,
+        from: source,
+        to: dest,
+        text: `# ${player} moves the titan from ${source} to ${dest}`
+    };
+    history_display(entry);
+}
+
+function undo_move(){
+    if(history_array.length===0){
+        return;
+    }
+    const last_move=history_array.pop();
+    redo_array.push(last_move);
+    
+    if(last_move.type==="placement"){
+        undo_placement(last_move.to,last_move.player);
+    }
+    else if(last_move.type==="movement"){
+        undo_movement(last_move.to,last_move.from,last_move.player);
+    }
+}
+
+function update_history(){
+    const history_moves_list = document.getElementById("history_moves_list");  
+    const text_history_array=history_array.map(item=>item.text);
+    history_moves_list.textContent=text_history_array.join("\n");
+    history_moves_list.style.color="black";
+    history_moves_list.scrollTop = history_moves_list.scrollHeight;
+}
+
+function undo_placement(id,player){
+    for(let node of node_list){
+        if(node[0]===id){
+            node[1]="grey";
+            set_node_color(node[0],node[1]);
+        }
+    }
+    if(player==="Player1"){
+        p1=true;
+        p2=false;
+    }
+    else if(player==="Player2"){
+        p1=false;
+        p2=true;
+    }
+    update_history();
+    if(outer_flag===0){
+        placement_outer_condition();
+    }
+    else if(outer_flag===1){
+        placement_inner_condition();
+    }
+}
+
+function undo_movement(to,from,player){
+    if(player==="Player1"){
+        for(let node of node_list){
+            if(node[0]===to){
+                node[1]="grey";
+                set_node_color(node[0],node[1]);
+            }
+            if(node[0]===from){
+                node[1]="tomato";
+                set_node_color(node[0],node[1]);
+            }
+        }
+        p1=true;
+        p2=false;
+    }
+    else if(player==="Player2"){
+        for(let node of node_list){
+            if(node[0]===to){
+                node[1]="grey";
+                set_node_color(node[0],node[1]);
+            }
+            if(node[0]===from){
+                node[1]="lightblue";
+                set_node_color(node[0],node[1]);
+            }
+        }
+        p1=false;
+        p2=true;
+    }
+    update_history();
+    check_win_condition();
+}
+
+function redo_move(){
+    if(redo_array.length===0){
+        return;
+    }
+    let last_move=redo_array.pop();
+    history_array.push(last_move);
+
+    if(last_move.type==="placement"){
+        redo_placement(last_move.to,last_move.player);
+    }
+    else if(last_move.type === "movement"){
+        redo_movement(last_move.from,last_move.to,last_move.player);
+    }
+}
+
+function redo_placement(to,player){
+    if(player==="Player1"){
+        for (const node of node_list) {
+            if(node[0]===to){
+                node[1]="tomato";
+                set_node_color(node[0],node[1]);
+            }
+        }
+        p1=false;
+        p2=true;
+    }
+    else if(player==="Player2"){
+        for (const node of node_list) {
+            if(node[0]===to){
+                node[1]="lightblue";
+                set_node_color(node[0],node[1]);
+            }
+        }
+        p1=true;
+        p2=false;
+    }
+    update_history();
+    if(outer_flag===0){
+        placement_outer_condition();
+    }
+    else if(outer_flag===1){
+        placement_inner_condition();
+    }
+}
+
+function redo_movement(from,to,player){
+    if(player==="Player1"){
+        for(let node of node_list){
+            if(node[0]===from){
+                node[1]="tomato";
+                set_node_color(node[0],node[1]);
+            }
+            if(node[0]===to){
+                node[1]="grey";
+                set_node_color(node[0],node[1]);
+            }
+        }
+        p1=false;
+        p2=true;
+    }
+    else if(player==="Player2"){
+        for(let node of node_list){
+            if(node[0]===from){
+                node[1]="lightblue";
+                set_node_color(node[0],node[1]);
+            }
+            if(node[0]===to){
+                node[1]="grey";
+                set_node_color(node[0],node[1]);
+            }
+        }
+        p1=true;
+        p2=false;
+    }
+    update_history();
+    check_win_condition();
+}
 const outer_nodes = ["node1", "node2", "node12", "node17", "node18", "node7"];
 const middle_nodes = ["node3", "node4", "node11", "node16", "node15", "node8"];
 const inner_nodes = ["node5", "node6", "node9", "node10", "node13", "node14"];
@@ -51,6 +306,12 @@ function play_select() {
     select.play();
 }
 
+function play_lose() {
+    const lose = document.getElementById("lose");
+    lose.playbackRate = 1;
+    lose.play();
+}
+
 function diagonal_lines(n1, n2) {
 
     const btn1 = document.getElementById(`node${n1}`);
@@ -77,7 +338,7 @@ function diagonal_lines(n1, n2) {
     line.style.left = `${x1}px`;
     line.style.height = `2px`;
     line.style.width = `${length}px`;
-    line.style.backgroundColor = "white";
+    line.style.backgroundColor = "black";
     line.style.transform = `rotate(${angle}deg)`;
     line.style.transformOrigin = '0 0';
     line.style.zIndex = "0";
@@ -149,13 +410,14 @@ function weights(n1, n2, x) {
 
     const weight = document.createElement("div");
     weight.textContent = `${x}`;
-    weight.style.color = "orange";
-    weight.style.backgroundColor = "black"
+    weight.style.color = "tomato";
     weight.style.position = "absolute";
+    weight.style.backgroundColor="white";
     weight.style.left = `${midX}px`;
     weight.style.top = `${midY}px`;
-    weight.style.zIndex = "100000";
-    weight.style.fontSize = "1em"
+    weight.style.zIndex = "1";
+    weight.style.fontSize = "1em";
+    weight.style.fontWeight="bold";
 
     weightsContainer.appendChild(weight);
 
@@ -176,14 +438,14 @@ function addscore() {
     edges.forEach(({ n1, n2, weight }) => {
         const btn1 = document.getElementById(`node${n1}`);
         const btn2 = document.getElementById(`node${n2}`);
-        const color1 = btn1.style.backgroundColor;
-        const color2 = btn2.style.backgroundColor;
+        const color1 = get_color(btn1.id);
+        const color2 = get_color(btn2.id);
 
         if (color1 === color2) {
-            if (color1 === "red") {
+            if (color1 === "tomato") {
                 red_score += weight;
             }
-            else if (color1 === "blue") {
+            else if (color1 === "lightblue") {
                 blue_score += weight;
             }
         }
@@ -227,7 +489,8 @@ const outer_middle_btns = document.querySelectorAll(".playable");
 
 function placement(btn1) {
     if (p1) {
-        btn1.style.backgroundColor = "red";
+        set_node_color(btn1.id, "tomato");
+        history_placement(btn1.id, "tomato");
         p1 = false;
         p2 = true;
         clearInterval(key1);
@@ -239,7 +502,8 @@ function placement(btn1) {
         addscore();
     }
     else if (p2) {
-        btn1.style.backgroundColor = "blue";
+        set_node_color(btn1.id, "lightblue");
+        history_placement(btn1.id, "lightblue");
         p1 = true;
         p2 = false;
         clearInterval(key1);
@@ -258,20 +522,23 @@ function placement_inner_condition() {
         middle_btns.forEach(btn2 => {
             btn2.onclick = function () {
                 play_click();
-                const check1 = btn2.style.backgroundColor === "red";
-                const check2 = btn2.style.backgroundColor === "blue";
+                const check1 = get_color(btn2.id) === "tomato";
+                const check2 = get_color(btn2.id) === "lightblue";
                 if (!check1 && !check2) {
                     if (p1) {
-                        btn2.style.backgroundColor = "red";
+                        set_node_color(btn2.id, "tomato");
+                        history_placement(btn2.id, "tomato");
                         p1 = false;
                         p2 = true;
                     } else {
-                        btn2.style.backgroundColor = "blue";
+                        set_node_color(btn2.id, "lightblue");
+                        history_placement(btn2.id, "lightblue");
                         p1 = true;
                         p2 = false;
                     }
                     filled++;
                     if (filled == 2) {
+                        check_titan_elimination();
                         middle_btns.forEach(btn2 => {
                             btn2.onclick = null;
                         })
@@ -287,11 +554,10 @@ function placement_inner_condition() {
 placement_outer_condition();
 
 function placement_outer_condition() {
-    console.log(p1);
     let any_grey = false;
     for (let outer_node of outer_nodes) {
         const btn = document.getElementById(outer_node);
-        const bg = btn.style.backgroundColor;
+        const bg = get_color(btn.id);
         if (bg === "grey") {
             any_grey = true;
         }
@@ -300,8 +566,8 @@ function placement_outer_condition() {
         outer_btns.forEach(btn1 => {
             btn1.onclick = function () {
                 play_click();
-                const check1 = btn1.style.backgroundColor === "red";
-                const check2 = btn1.style.backgroundColor === "blue";
+                const check1 = get_color(btn1.id) === "tomato";
+                const check2 = get_color(btn1.id) === "lightblue";
                 if (!check1 && !check2) {
                     placement(btn1);
                 }
@@ -310,6 +576,7 @@ function placement_outer_condition() {
 
     }
     else if (any_grey === false) {
+        outer_flag++;
         play_next_circuit_unlock();
         placement_inner_condition();
     }
@@ -367,8 +634,8 @@ function timer3() {
             if (p1) {
                 alert("Player 2 WON!!!");
             }
-        else {
-            alert("Player 1 WON!!!");
+            else {
+                alert("Player 1 WON!!!");
             }
             location.reload();
         }, 300);
@@ -403,6 +670,9 @@ function timer4() {
 const pause = document.getElementById("pause");
 const resume = document.getElementById("resume");
 const reset = document.getElementById("reset");
+const undo = document.getElementById("undo");
+const redo = document.getElementById("redo");
+const history = document.getElementById("history");
 
 if (document.getElementById("timer1").textContent == `2:00` && p1) {
     key1 = setInterval(timer1, 1000);
@@ -424,6 +694,22 @@ reset.onclick = function () {
     setTimeout(() => {
         reset_timer();
     }, 300);
+}
+
+undo.onclick = function(){
+    play_select();
+    undo_move();
+}
+
+redo.onclick=function(){
+    play_select();
+    redo_move();
+}
+
+history.onclick=function(){
+    console.log("history");
+    play_select();
+    show_history();
 }
 
 function pause_timer() {
@@ -465,6 +751,18 @@ function reset_timer() {
     location.reload();
 }
 
+function show_history(){
+    console.log("show_history");
+    const history_moves = document.getElementById("history_moves");
+    if(history_moves.style.display==="none"){
+        history_moves.style.display="block";
+        update_history();
+    }
+    else{
+        history_moves.style.display="none";
+    }
+}
+
 
 function movement() {
     p1 = true;
@@ -481,10 +779,11 @@ function check_win_condition() {
     const innerNodes = document.querySelectorAll(".playable3");
     let all_coloured = true;
     innerNodes.forEach(node => {
-        if (node.style.backgroundColor !== "blue" && node.style.backgroundColor !== "red") {
+        if (get_color(node.id) !== "lightblue" && get_color(node.id) !== "tomato") {
             all_coloured = false;
         }
     })
+
     if (all_coloured) {
         play_winning_notification();
         setTimeout(() => {
@@ -502,8 +801,54 @@ function check_win_condition() {
         return;
     }
     else {
+        check_titan_elimination();
         check_middle_nodes();
     }
+}
+
+function check_titan_elimination() {
+    const all_nodes = document.querySelectorAll(".node");
+    all_nodes.forEach(node => {
+        if(get_color(node.id) === "tomato"){
+            const neighbours = graph[node.id];
+            let all_blue = true;
+            neighbours.forEach(neighbour => {
+                const neighbour_btn = document.getElementById(neighbour);
+                if(get_color(neighbour_btn.id) !== "lightblue"){
+                    all_blue = false;
+                }
+            })
+            if(all_blue){
+                node.style.transition = "background-color 0.5s ease-in-out";
+                play_lose();
+                set_node_color(node.id, "grey");
+                node.classList.remove("green_highlight");
+                node.style.boxShadow="none";
+                node.onclick = null;
+            }
+
+        }
+        else if(get_color(node.id) === "lightblue"){
+            const neighbours = graph[node.id];
+            let all_red = true;
+            neighbours.forEach(neighbour => {
+                const neighbour_btn = document.getElementById(neighbour);
+                if(get_color(neighbour_btn.id) !== "tomato"){
+                    all_red = false;
+                }
+            })
+            if(all_red){
+                node.style.transition = "background-color 0.5s ease-in-out";
+                play_lose();
+                set_node_color(node.id, "grey");
+                node.classList.remove("green_highlight");
+                node.style.boxShadow="none";
+                node.onclick = null;
+            }
+
+        }
+    })
+    console.log(node_list);
 }
 
 let flag = false;
@@ -513,8 +858,10 @@ let audio_flag = true;
 function check_middle_nodes() {
     let middle_nodes_full = true;
     middle_nodes.forEach(middle_node => {
-        const bg = document.getElementById(middle_node).style.backgroundColor;
-        if (bg !== "blue" && bg !== "red") {
+        const bg = get_color(middle_node);
+        console.log(`middle_node: ${middle_node}`);
+        console.log(`bg: ${bg}`);
+        if (bg != "lightblue" && bg != "tomato") {
             middle_nodes_full = false;
         }
     })
@@ -536,43 +883,44 @@ function check_middle_nodes() {
             highlight2(found);
         }
     }
-    if(middle_nodes_full && audio_flag) {
+    if (middle_nodes_full && audio_flag) {
         play_next_circuit_unlock();
         audio_flag = false;
     }
     console.log(`found: ${found}`);
-    console.log(`middle_nodes_full: ${middle_nodes_full}`);
+    // console.log(`middle_nodes_full: ${middle_nodes_full}`);
+    // console.log(`bg: ${bg}`);
+    console.log(node_list);
 
 }
 
 function highlight1(found) {
     const all_nodes = document.querySelectorAll(".node");
     all_nodes.forEach(n => {
-        if (n.style.backgroundColor === "green") {
-            n.style.backgroundColor = "grey";
+        if (get_color(n.id) === "lightgreen") {
+            set_node_color(n.id, "grey");
         }
         n.classList.remove("green_highlight");
-        n.style.boxShadow="none";
+        n.style.boxShadow = "none";
         n.onclick = null;
     });
-    
+
     all_nodes.forEach(btn => {
-        if (btn.style.backgroundColor === "red") {
+        if (get_color(btn.id) === "tomato") {
             btn.onclick = function () {
                 play_select_click();
                 all_nodes.forEach(n => {
-                    if (n.style.backgroundColor === "green") {
-                        n.style.backgroundColor = "grey";
+                    if (get_color(n.id) === "lightgreen") {
+                        set_node_color(n.id, "grey");
                         n.classList.remove("green_highlight");
-                        n.style.boxShadow="none";
+                        n.style.boxShadow = "none";
                         n.onclick = null;
                     }
                 });
                 const neighbours = graph[btn.id];
-                
-                console.log(neighbours);
+
                 const new_neighbours = [...neighbours];
-                
+
                 if (!found) {
                     for (let neighbour of neighbours) {
                         if (inner_nodes.includes(neighbour)) {
@@ -583,18 +931,15 @@ function highlight1(found) {
                         }
                     }
                 }
-                
-                console.log("after");
-                console.log(new_neighbours);
-                
+
                 new_neighbours.forEach(neighbourbtn => {
                     const n_btn = document.getElementById(neighbourbtn);
-                    const check1 = n_btn.style.backgroundColor === "red";
-                    const check2 = n_btn.style.backgroundColor === "blue";
-                    n_btn.style.boxShadow="0 0 10px red";
+                    const check1 = get_color(n_btn.id) === "tomato";
+                    const check2 = get_color(n_btn.id) === "lightblue";
                     if (!check1 && !check2 && p1) {
                         n_btn.classList.add("green_highlight");
-                        n_btn.style.backgroundColor = "green";
+                        n_btn.style.boxShadow = "0 0 10px red";
+                        set_node_color(n_btn.id, "lightgreen");
                         n_btn.onclick = null;
                         n_btn.onclick = function () {
                             play_movement();
@@ -602,7 +947,7 @@ function highlight1(found) {
                             new_neighbours.forEach(n => {
                                 const n_btn = document.getElementById(n);
                                 n_btn.classList.remove("green_highlight");
-                                n_btn.style.boxShadow="none";
+                                n_btn.style.boxShadow = "none";
                             })
                             addscore();
                         }
@@ -615,31 +960,31 @@ function highlight1(found) {
 function highlight2(found) {
     const all_nodes = document.querySelectorAll(".node");
     all_nodes.forEach(n => {
-        if (n.style.backgroundColor === "green") {
-            n.style.backgroundColor = "grey";
+        if (get_color(n.id) === "lightgreen") {
+            set_node_color(n.id, "grey");
         }
-        n.classList.remove("green_highlight");  
-        n.style.boxShadow="none";
+        n.classList.remove("green_highlight");
+        n.style.boxShadow = "none";
         n.onclick = null;
     });
     all_nodes.forEach(node => {
-        if (node.style.backgroundColor === "blue" && p2) {
+        if (get_color(node.id) === "lightblue" && p2) {
             node.onclick = function () {
                 play_select_click();
                 all_nodes.forEach(n => {
-                    if (n.style.backgroundColor === "green") {
-                        n.style.backgroundColor = "grey";
+                    if (get_color(n.id) === "lightgreen") {
+                        set_node_color(n.id, "grey");
                         n.classList.remove("green_highlight");
-                        n.style.boxShadow="none";
+                        n.style.boxShadow = "none";
                         n.onclick = null;
                     }
                 });
-                
+
                 const neighbours = graph[node.id];
                 const new_neighbours = [...neighbours];
-                
+
                 if (!found) {
-                    
+
                     for (let neighbour of neighbours) {
                         if (inner_nodes.includes(neighbour)) {
                             const i = new_neighbours.indexOf(neighbour);
@@ -649,18 +994,15 @@ function highlight2(found) {
                         }
                     }
                 }
-                
-                console.log(new_neighbours);
-                
-                
+
                 new_neighbours.forEach(neighbourbtn => {
                     const btn = document.getElementById(neighbourbtn);
-                    const check1 = btn.style.backgroundColor === "red";
-                    const check2 = btn.style.backgroundColor === "blue";
+                    const check1 = get_color(btn.id) === "tomato";
+                    const check2 = get_color(btn.id) === "lightblue";
                     if (!check1 && !check2 && p2) {
-                        btn.style.backgroundColor = "green";
+                        set_node_color(btn.id, "lightgreen");
                         btn.classList.add("green_highlight");
-                        btn.style.boxShadow="0 0 15px rgb(10, 10, 255)";
+                        btn.style.boxShadow = "0 0 15px rgb(10, 10, 255)";
                         btn.onclick = null;
                         btn.onclick = function () {
                             play_movement();
@@ -668,7 +1010,7 @@ function highlight2(found) {
                             new_neighbours.forEach(n => {
                                 const n_btn = document.getElementById(n);
                                 n_btn.classList.remove("green_highlight");
-                                n_btn.style.boxShadow="none";
+                                n_btn.style.boxShadow = "none";
                             })
                             addscore();
                         }
@@ -683,17 +1025,21 @@ function movement1(btn, node) {
     const dest = document.getElementById(btn);
     const source = document.getElementById(node);
 
+    update_node_list(source.id, "grey");
+    update_node_list(dest.id, "tomato");
+    history_movement(source.id,dest.id,"tomato");
+
     setTimeout(() => {
         dest.style.transition = "background-color 0.5s ease-in-out";
         source.style.transition = "background-color 0.5s ease-in-out";
 
-        source.style.backgroundColor = "grey";
-        dest.style.backgroundColor = "red";
+        update_color(source.id, "grey");
+        update_color(dest.id, "tomato");
     }, 200);
 
     document.querySelectorAll(".node").forEach(n => {
-        if (n.style.backgroundColor === "green") {
-            n.style.backgroundColor = "grey";
+        if (get_color(n.id) === "lightgreen") {
+            set_node_color(n.id, "grey");
             n.onclick = null;
             addscore();
         }
@@ -709,6 +1055,7 @@ function movement1(btn, node) {
     document.getElementById("stopwatch1").textContent = `${time3 < 10 ? "0" + time3 : time3}`;
     key2 = setInterval(timer4, 1000);
 
+    console.log(node_list);
     check_win_condition();
 }
 
@@ -716,17 +1063,20 @@ function movement2(btn, node) {
     const dest = document.getElementById(btn);
     const source = document.getElementById(node);
 
-    
+    update_node_list(source.id, "grey");
+    update_node_list(dest.id, "lightblue");
+    history_movement(source.id,dest.id,"lightblue");
+
     setTimeout(() => {
         dest.style.transition = "background-color 0.5s ease-in-out";
         source.style.transition = "background-color 0.5s ease-in-out";
-        source.style.backgroundColor = "grey";
-        dest.style.backgroundColor = "blue";
+        update_color(source.id, "grey");
+        update_color(dest.id, "lightblue");
     }, 200);
 
     document.querySelectorAll(".node").forEach(n => {
-        if (n.style.backgroundColor === "green") {
-            n.style.backgroundColor = "grey";
+        if (get_color(n.id) === "lightgreen") {
+            set_node_color(n.id, "grey");
             n.onclick = null;
             addscore();
         }

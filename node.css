@@ -3,7 +3,7 @@
     aspect-ratio: 1;
     border-radius: 50%;
     text-align: center;
-    border: 2px solid white;
+    border: 2px solid black;
     color: white;
     display: flex;
     justify-content: center;
@@ -48,7 +48,6 @@
 
 .last_row_2 {
     transform: translate(-149%, -50%);
-
     width: min(32vw, 32vh);
 }
 
@@ -60,7 +59,6 @@
     width: min(50vw, 50vh);
     display: flex;
     justify-content: space-evenly;
-
 }
 
 .div3 {
@@ -72,13 +70,14 @@
     width: min(40vw, 40vh);
     pointer-events: none; 
     z-index: 1000;
-
 }
+
 .div3 > .node {
     pointer-events: auto;
     position: relative;
     z-index: 1001;
-  }
+}
+
 .div4 {
     z-index: 100;
     position: absolute;
@@ -114,5 +113,4 @@
     top: -1%;
     width: min(50vw, 50vh);
     justify-content: space-between;
-
 }

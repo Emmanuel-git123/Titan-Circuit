@@ -26,7 +26,7 @@
     100% {transform: scale(1);}
 }
 .green_highlight{
-    animation: pulse 1.5s infinite;
+    animation: pulse 1s infinite;
 }
 .last_row_2,
 .last_row_1,
